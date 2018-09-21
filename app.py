@@ -28,7 +28,18 @@ def generate_table(dataframe, max_rows=10):
     )
 
 app.layout = html.Div(children=[
-    dcc.Tabs(id='tabs', value= 'tab-2', children=[
+    dcc.Tabs(id='tabs', value= 'tab-2',
+        style = {
+            'fontFamily': 'system-ui'
+        },
+        content_style = {
+            'fontFamily': 'Arial',
+            'borderLeft': '1px solid #d6d6d6',
+            'borderRight': '1px solid #d6d6d6',
+            'borderBottom': '1px solid #d6d6d6',
+            'padding': '44px'
+        },
+    children=[
         dcc.Tab(label='Tips data set', value= 'tab-1', children=[
             html.Div([
                 html.H1(
@@ -46,8 +57,8 @@ app.layout = html.Div(children=[
                 ),
                 html.Table([
                     html.Tr([
-                        html.Td([
-                            html.P('Hue: '),
+                        html.Td(html.P('Hue: ')),
+                        html.Td(
                             dcc.Dropdown(
                                 id='ddl-hue-scatter',
                                 options=[{'label': 'Smoker', 'value': 'smoker'},
@@ -57,9 +68,9 @@ app.layout = html.Div(children=[
                                 ],
                                 value='sex'
                             )
-                        ])
+                        )
                     ])
-                ], style={'width': '900px'}),
+                ], style={'width': '300px'}),
                 dcc.Graph(
                         id='scatterPlot',
                         figure={
@@ -109,24 +120,15 @@ app.layout = html.Div(children=[
                 )
             ])
         ])
-    ],
-        style = {
-            'fontFamily': 'system-ui'
-        },
-        content_style = {
-            'fontFamily': 'Arial',
-            'borderLeft': '1px solid #d6d6d6',
-            'borderRight': '1px solid #d6d6d6',
-            'borderBottom': '1px solid #d6d6d6',
-            'padding': '44px'
-        }
-    )
+    ])
 ],
     style = {
         'maxWidth': '1000px',
         'margin': '0 auto'
     }
 )
+
+# Categorical graph callback
 
 @app.callback(
     Output('categoricalPlot', 'figure'),
@@ -145,6 +147,8 @@ def update_category_graph(ddljeniscategory, ddlxcategory):
                 )
    }
 
+# scatter plot callback
+
 @app.callback(
     Output('scatterPlot', 'figure'),
     [Input('ddl-hue-scatter', 'value')]
@@ -157,7 +161,7 @@ def update_scatter_hue(ddlhuescatter):
                     x=dfTips[dfTips[ddlhuescatter] == col]['total_bill'], 
                     y=dfTips[dfTips[ddlhuescatter] == col]['tip'], 
                     mode='markers', 
-                    # line=dict(color=color_set[i], width=1, dash='dash'), 
+                    # line=dict(color=color_set[i], width=1, dash='dash'),
                     marker=dict(color=color_set[ddlhuescatter][i], size=10, line={'width': 0.5, 'color': 'white'}), name=col)
                 for col,i in zip(dfTips[ddlhuescatter].unique(),range(len(color_set[ddlhuescatter])))
             ],
